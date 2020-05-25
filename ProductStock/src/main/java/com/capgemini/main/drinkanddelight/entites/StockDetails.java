@@ -1,4 +1,4 @@
-package com.capgemini.main.entites;
+package com.capgemini.main.drinkanddelight.entites;
 
 import java.time.LocalDate;
 
@@ -28,6 +28,7 @@ public class StockDetails {
 	private double quantityUnit;
 	private double pricePerUnit;
 	private String warehouseId;
+	private LocalDate exitDate;
 	private LocalDate manufactureDate;
 	private LocalDate expiryDate;
 	private String qualityCheck;
@@ -41,7 +42,7 @@ public class StockDetails {
 
 
 	public StockDetails(String stockId, String name, String supplierId, double quantityValue, double quantityUnit,
-			double pricePerUnit, String warehouseId, LocalDate manufactureDate, LocalDate expiryDate,
+			double pricePerUnit, String warehouseId,LocalDate exitDate, LocalDate manufactureDate, LocalDate expiryDate,
 			String qualityCheck) {
 		super();
 		this.stockId = stockId;
@@ -54,6 +55,17 @@ public class StockDetails {
 		this.manufactureDate = manufactureDate;
 		this.expiryDate = expiryDate;
 		this.qualityCheck = qualityCheck;
+		this.exitDate=exitDate;
+	}
+
+
+	public LocalDate getExitDate() {
+		return exitDate;
+	}
+
+	@JsonFormat(pattern="yyyy-MM-dd")
+	public void setExitDate(LocalDate exitDate) {
+		this.exitDate = exitDate;
 	}
 
 
