@@ -28,9 +28,17 @@ public class ProductServiceImplementation implements ProductServiceInterface{
 	ProductDaoInterface daoObj;
 
 	@Override
-	public StockDetails getProductSpecs(String stockId) {
+	public StockDetails getProductSpecs(String stockId) throws ProductNotFoundException {
 		
-			 return daoObj.findById(stockId).get();
+			 Optional<StockDetails> detail= daoObj.findById(stockId);
+			 if(detail.isPresent())
+			 {
+				 StockDetails stock=detail.get();
+				 return stock;
+			 }
+			  
+				 throw new ProductNotFoundException("Enter valid Stock Id");
+			 
 		
 			
 		
@@ -40,10 +48,15 @@ public class ProductServiceImplementation implements ProductServiceInterface{
 
 	
 	@Override
-	public List<StockDetails> retrieve() {
+	public List<StockDetails> retrieve() throws ProductNotFoundException {
 		
-		return (List<StockDetails>)
+	List<StockDetails> list=
 				daoObj.findAll();
+	if(list != null)
+	{
+	return list;
+	}
+	throw new ProductNotFoundException("No Stock available in Product Stock ,please enter values");
 		
 	}
 //
@@ -55,22 +68,34 @@ public class ProductServiceImplementation implements ProductServiceInterface{
 
 
 	@Override
-	public boolean updateProduct(String stockId, LocalDate manufactureDate, LocalDate expiryDate, String qualityCheck) throws ProductNotFoundException {
+	public String updateProduct(String stockId, LocalDate manufactureDate, LocalDate expiryDate, String qualityCheck) throws ProductNotFoundException {
+		try {
 		Optional<StockDetails> optional= daoObj.findById(stockId);
 		 if(optional.isPresent())
 		 {
 			 	StockDetails order = optional.get();
-			 	if(order!=null && manufactureDate.compareTo(LocalDate.now())<0 && expiryDate.compareTo(LocalDate.now())>0 )
+			 	if(order!=null && manufactureDate.compareTo(LocalDate.now())<0 && expiryDate.compareTo(LocalDate.now())>0 && qualityCheck !=null )
 			 	{
 			 		order.setExpiryDate(expiryDate);
 			 order.setManufactureDate(manufactureDate);
 			 order.setQualityCheck(qualityCheck);
-			 return true;
+			 return "Product Stock Updated Successfully";
 			 	}
 			 	else
-			 		throw new ProductNotFoundException("sorry! we can not update it enter valid md and ed");
+			 	{
+			 		return "Enter valid Manufacturing Date and Expiry Date";
+			 	}
+			 	
 		 }
-		return false;
+		 else
+		 throw new ProductNotFoundException("Enter valid Stock id");
+		 
+		}
+		catch(ProductNotFoundException e)
+		{
+			throw new ProductNotFoundException("Enter valid Stock id");
+		}
+	
 	}
 
 
@@ -93,7 +118,8 @@ public class ProductServiceImplementation implements ProductServiceInterface{
 
 
 	@Override
-	public boolean setExitDate(String stockId, LocalDate exitDate) throws ProductNotFoundException {
+	public String setExitDate(String stockId, LocalDate exitDate) throws ProductNotFoundException  {
+		try {
 		Optional<StockDetails> optional= daoObj.findById(stockId);
 		 if(optional.isPresent())
 		 {
@@ -101,14 +127,20 @@ public class ProductServiceImplementation implements ProductServiceInterface{
 			 	if(order !=null && exitDate.compareTo(LocalDate.now())<=0)
 			 	{
 			 	order.setExitDate(exitDate);
-			 	return true;
+			 	return "exit date set";
 			 	}
-			 	else
-			 	{
-			 		throw new ProductNotFoundException("Exit date can not be set");
-			 	}
+			 	
+			 		return "enter valid exit date";
+			 	
 		 }
-		return false;
+		
+		 throw new ProductNotFoundException("Enter valid Stock Id");
+		}
+		catch(ProductNotFoundException e)
+		{
+			 throw new ProductNotFoundException("Enter valid Stock Id");
+		}
+		
 	}
 
 
